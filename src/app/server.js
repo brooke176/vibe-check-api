@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const WebSocket = require('ws');
 const http = require('http');
-const { auth } = require('express-oauth2-jwt-bearer');
 const User = require('./UserModel');
 
 mongoose.connect(process.env.MONGODB_URI, {
@@ -20,31 +19,15 @@ const server = http.createServer(app);
 // Initialize WebSocket Server
 const wss = new WebSocket.Server({ server });
 
-// Auth0 JWT Check
-// const jwtCheck = auth({
-//   audience: 'https://dev-e86qxmlpu8jkgpw3.us.auth0.com/api/intent/goOut',
-//   // audience: 'https://vcapi.com/api/intent/goOut',
-//   issuerBaseURL: 'https://dev-e86qxmlpu8jkgpw3.us.auth0.com/',
-//   tokenSigningAlg: 'RS256'
-// });
-
-// enforce on all endpoints
-// app.use(jwtCheck);
-
-// app.get('/authorized', function (req, res) {
-//     res.send('Secured Resource');
-// });
-
-// Middleware
-// app.use(bodyParser.json());
-// const jwtCheck = auth({
-//   audience: 'https://vcapi.com/api/intent/goOut',
-//   issuerBaseURL: 'https://dev-e86qxmlpu8jkgpw3.us.auth0.com/',
-//   tokenSigningAlg: 'RS256'
-// });
-// app.use(jwtCheck);
-
+// // Middleware
 app.use(bodyParser.json());
+const jwtCheck = auth({
+  audience: 'https://vcapi.com/api/intent/goOut',
+  issuerBaseURL: 'https://dev-e86qxmlpu8jkgpw3.us.auth0.com/',
+  tokenSigningAlg: 'RS256'
+});
+
+app.use(jwtCheck);
 app.use('/api/intent/goOut', friendRoutes);
 
 // WebSocket connections handling
@@ -64,6 +47,10 @@ function notifyUser(userId) {
     clients[userId].send(JSON.stringify({ message: 'Mutual intent found!' }));
   }
 }
+
+// userId: 'google-oauth2|102864193171999781468',
+// wantsToGoOut: true,
+// selectedFriends: [ 'auth0|65e7e171c0afa4cac6137ecb' ]
 
 app.post('/api/intent/goOut', async (req, res) => {
   const { userId, wantsToGoOut, selectedFriends } = req.body;
