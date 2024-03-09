@@ -1,0 +1,23 @@
+{
+  "name": "vibe-check-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "friends.js",
+  "scripts": {
+    "lint": "eslint --fix --ext .js,.jsx .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "eslint": "^8.57.0",
+    "express": "^4.18.3",
+    "express-generator": "^4.16.1",
+    "express-oauth2-jwt-bearer": "^1.6.0",
+    "mongodb": "^6.4.0",
+    "mongoose": "^8.2.1",
+    "ws": "^8.16.0"
+  }
+}
